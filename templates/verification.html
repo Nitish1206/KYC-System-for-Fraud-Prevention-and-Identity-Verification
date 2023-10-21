@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYC Fraud Detection</title>
+
+    <style>
+        body {
+            background-color: #0b0c0c;
+            /* Set the background color to black */
+            text-align: center;
+            
+            font-family: Arial, sans-serif;
+            color: white; /* Change the text color to white for better visibility on a black background */
+        }
+        button {
+            background-color: #3498db; /* Blue background color */
+            color: rgb(13, 13, 13); /* White text color */
+            padding: 15px 20px; /* Padding around the text */
+            border: none; /* Remove button border */
+            cursor: pointer; /* Add a pointer cursor on hover */
+            margin: 5px; /* Add some margin for spacing between buttons */
+            font-size: 24px;
+        }
+
+        /* Style the buttons on hover */
+        button:hover {
+            background-color: #cb2a25; /* Darker blue background color on hover */
+        }
+    </style>
+
+</head>
+<body>
+    <h2>Verify yoourself capturing live image</h2>
+    <!-- <img id="captured-image" style="display: none;" hidden> -->
+    <video autoplay="true" id="videoElement">
+        
+    </video>
+    <script src="{{url_for('static', filename='stream.js')}}"></script>
+    <script>
+
+        var video = document.querySelector("#videoElement");
+        stream(video);
+
+    </script>
+    <!-- <form action="{{ url_for('validate') }}" method="POST" enctype=multipart/form-data></form> -->
+    
+    <button id="take-snapshot">Take Snapshot</button>
+    <canvas id="snapshot-canvas" width="640" height="480"></canvas>
+
+    <button id="verify">Verification</button>
+    
+    <script>
+        const videoElement = document.getElementById('videoElement');
+        const captureButton = document.getElementById('take-snapshot');
+        const snapshotCanvas = document.getElementById('snapshot-canvas');
+        // const capturedImage = document.getElementById('captured-image');
+        const context = snapshotCanvas.getContext('2d');
+        const verificationbutton = document.getElementById("verify");
+
+
+
+        navigator.mediaDevices
+            .getUserMedia({ video: true })
+            .then(function (stream) {
+                videoElement.srcObject = stream;
+            })
+            .catch(function (error) {
+                console.error('Error accessing the camera:', error);
+            });
+
+        captureButton.addEventListener('click', function () {
+            context.drawImage(videoElement, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
+            // capturedImage.src = snapshotCanvas.toDataURL('image/png');
+            // capturedImage.style.display = 'block';
+        });
+
+        
+
+        
+        verificationbutton.addEventListener("click", () => {
+            const image = snapshotCanvas.toDataURL("image/png"); // Capture canvas as a PNG image
+            uploadImage(image);
+            // window.location.href = '/status';
+        });
+
+        function uploadImage(imageData) {
+            fetch("/compare", {
+                method: "POST",
+                body: JSON.stringify({ image: imageData }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => { return response.json();})
+            .then(data => {
+                // alert(window.location.origin + data.redirect_url);
+                // alert(data.redirect_url);
+                window.location.href = window.location.origin + data.redirect_url ;
+
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        }
+    </script>
+
+</body>
+</html>

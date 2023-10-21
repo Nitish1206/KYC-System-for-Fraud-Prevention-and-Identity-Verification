@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>auth page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #0e0e0f;
+        }
+        .container {
+            margin-top: 100px;
+        }
+        h1 {
+            color: #f1e8e8;
+        }
+        #message p {
+        font-size: 36px; /* You can adjust the font size as needed */
+        color: inherit; /* By default, use the parent's text color */
+        }
+        #message p.red {
+            color: red; /* Set text color to red for messages containing "red" */
+        }
+        #message p.green {
+            color: green; /* Set text color to green for messages containing "green" */
+        }
+        a {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1> Authentication  </h1>
+        <div id="message">
+            <p class="{% if message == 'verification denied face does not match with ID card face' %}red{% else %}green{% endif %}">{{ message }}</p>
+            
+        </div>
+        <a href="/">Back to Home</a>
+        <br>
+        <br>
+        <a href="/verify">Retry verification</a>
+    </div>
+
+   
+</body>
+</html>
